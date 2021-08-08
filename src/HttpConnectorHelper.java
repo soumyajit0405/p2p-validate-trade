@@ -88,6 +88,50 @@ public class HttpConnectorHelper {
 		return map;
 	}
 	
+	public JSONObject sendRequestToAgent(String url, JSONObject params, int paramsFlag) throws IOException,JSONException {
+		JSONObject responseFromAgent = null;
+		URL obj = new URL(url);
+		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+		con.setRequestMethod("POST");
+	//	con.setRequestProperty("User-Agent", USER_AGENT);
+		con.setRequestProperty("Content-Type", "application/json");
+		con.setDoOutput(true);
+		OutputStream os = con.getOutputStream();
+		System.out.println(params.toString());
+		os.write(params.toString().getBytes());	
+		os.flush();
+		os.close();
+		if(paramsFlag  > 0) {
+			
+		} else {
+			
+		}
+		
+		int responseCode = con.getResponseCode();
+		System.out.println("POST Response Code :: " + responseCode);
+
+		if (responseCode == HttpURLConnection.HTTP_OK) { //success
+			BufferedReader in = new BufferedReader(new InputStreamReader(
+					con.getInputStream()));
+			String inputLine;
+			StringBuffer response = new StringBuffer();
+
+			while ((inputLine = in.readLine()) != null) {
+				response.append(inputLine);
+			}
+			responseFromAgent = new JSONObject(response.toString());
+						
+			in.close();
+			
+			// print result
+			System.out.println(response.toString());
+		} else {
+			System.out.println("POST request not worked");
+			return responseFromAgent;
+		}
+		return responseFromAgent;
+	}
+	
 	public HashMap<String,String> sendPostWithToken(String url, JSONObject params, int paramsFlag, String token) throws IOException {
 		HashMap<String,String> map = new HashMap<>();
 		URL obj = new URL(url);

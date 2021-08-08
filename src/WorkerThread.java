@@ -51,19 +51,25 @@ class WorkerThread implements Runnable {
 				dbhelper.createBlockchainTx("abc", "TRADE_VALIDATED",  blockChainOrderId);
 				sdao.updateOrderStatus(generalOrderId);
 				//Commented Fines Section
-				/*
-				 * try { Thread.sleep(60000); } catch (InterruptedException e) { // TODO
-				 * Auto-generated catch block e.printStackTrace(); } inputDetails1 = new
-				 * JSONObject(); inputDetails1.put("orderid", orderId); JSONObject jsResponse=
-				 * httpconnectorhelper
-				 * .sendPostWithTokenForOrder("http://159.89.175.110:6380/getOrder",
-				 * inputDetails1, 1,token);
-				 * 
-				 * dbhelper.updateOrderAmount((int)jsResponse.get("Seller_METER_READING_S")-(int
-				 * )jsResponse.get("Seller_METER_READING_E"),(int)jsResponse.get("S_FINE"),(int)
-				 * jsResponse.get("Buyer_METER_READING_S")-(int)jsResponse.get(
-				 * "Buyer_METER_READING_E"),(int)jsResponse.getDouble("B_FINE"),generalOrderId);
-				 */				
+				
+				try {
+					Thread.sleep(60000);
+				} catch (InterruptedException e) {
+
+					e.printStackTrace();
+
+				}
+				inputDetails1 = new JSONObject();
+				inputDetails1.put("orderid", orderId);
+//				JSONObject jsResponse = httpconnectorhelper
+//						.sendPostWithTokenForOrder("http://159.89.175.110:6380/getOrder", inputDetails1, 1, token);
+//
+//				dbhelper.updateOrderAmount(
+//						(int) jsResponse.get("Seller_METER_READING_S") - (int) jsResponse.get("Seller_METER_READING_E"),
+//						(int) jsResponse.get("S_FINE"),
+//						(int) jsResponse.get("Buyer_METER_READING_S") - (int) jsResponse.get("Buyer_METER_READING_E"),
+//						(int) jsResponse.getDouble("B_FINE"), generalOrderId);
+
 			}
 	} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
