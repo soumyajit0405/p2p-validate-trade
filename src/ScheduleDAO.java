@@ -15,15 +15,18 @@ import java.util.LinkedHashMap;
 
 public class ScheduleDAO {
 
-	static Connection con;
+	// Connection con;
 	Statement stmt = null;
 	PreparedStatement pStmt = null;
-	 public ArrayList<HashMap<String,Object>> getCompletedTrades(String date,String time, String source) throws SQLException, ClassNotFoundException
+	 public synchronized ArrayList<HashMap<String,Object>> getCompletedTrades(String date,String time, String source) throws SQLException, ClassNotFoundException
 	 {
+		 Connection con = null;
+		 ArrayList<HashMap<String,Object>> al=new ArrayList<>();
+		 try {
 		 PreparedStatement pstmt = null;
 		  time=time+":00";
 		  String query = "";
-		  ArrayList<HashMap<String,Object>> al=new ArrayList<>();
+		  
 		 //time="16:21"+":00";
 		//JDBCConnection connref =new JDBCConnection();
 		 if (con == null ) {
@@ -48,11 +51,11 @@ public class ScheduleDAO {
 			
 		 }
 		 }else {
-			 System.out.println("select aso.sell_order_id,ud.meter_id,aso.transfer_start_ts,aso.transfer_end_ts\r\n"
+			 System.out.println("select aso.sell_order_id,ud.meter_id,aso.energy,aso.transfer_start_ts,aso.transfer_end_ts\r\n"
 			 		+ " from all_sell_orders aso,user_devices ud \r\n"
 			 		+ " where aso.transfer_end_ts ='"+date+" "+time+"'  \r\n"
 			 		+ " and aso.order_status_id = 5 and aso.user_device_id = ud.user_device_id");
-				query="select aso.sell_order_id,ud.meter_id,aso.transfer_start_ts,aso.transfer_end_ts\r\n"
+				query="select aso.sell_order_id,ud.meter_id,aso.energy,aso.transfer_start_ts,aso.transfer_end_ts\r\n"
 						+ " from all_sell_orders aso,user_devices ud \r\n"
 						+ " where aso.transfer_end_ts ='"+date+" "+time+"'  \r\n"
 						+ " and aso.order_status_id = 5 and aso.user_device_id = ud.user_device_id";
@@ -67,18 +70,36 @@ public class ScheduleDAO {
 				 data.put("meterId",rs.getInt("meter_id"));
 				 data.put("startTs",(rs.getString("transfer_start_ts")).toString());
 				 data.put("endTs",(rs.getString("transfer_end_ts")).toString());
+				 data.put("energy",(rs.getFloat("energy")));
 				 al.add(data);
 				
 			 }	 
 		 }
+		 }
+		 catch(Exception e) {
+			 e.printStackTrace();
+		 }finally {
+				if (con != null) {
+					try {
+						con.close();
+						System.out.println("Connection Closed");
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+		 }
 		 System.out.println("AL --- >" +al.size());
 		return  al;
+	 
 	 }
 	 
-	 public void updateOrderStatus(int orderId) throws SQLException, ClassNotFoundException
+	 public synchronized void updateOrderStatus(int orderId) throws SQLException, ClassNotFoundException
 	 {
 		 PreparedStatement pstmt = null;
 		//JDBCConnection connref =new JDBCConnection();
+		 Connection con = null;
+		 try {
 		 if (con == null ) {
 				con = JDBCConnection.getOracleConnection();
 		 }
@@ -91,13 +112,29 @@ public class ScheduleDAO {
 		 pstmt=con.prepareStatement(query);
 		pstmt.setInt(1,orderId);
 		 pstmt.executeUpdate();
+		 }catch(Exception e) {
+			 e.printStackTrace();
+		 }
+		 finally {
+				if (con != null) {
+					try {
+						con.close();
+						System.out.println("Connection Closed");
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+		 }
 		 
 	 }
 	 
-	 public void updateOrderStatus(int orderId,int contractStatus, int orderStatus) throws SQLException, ClassNotFoundException
+	 public synchronized void updateOrderStatus(int orderId,int contractStatus, int orderStatus) throws SQLException, ClassNotFoundException
 	 {
 		 PreparedStatement pstmt = null;
 		//JDBCConnection connref =new JDBCConnection();
+		 Connection con = null;
+		 try {
 		 if (con == null ) {
 				con = JDBCConnection.getOracleConnection();
 		 }
@@ -110,12 +147,29 @@ public class ScheduleDAO {
 		 pstmt=con.prepareStatement(query);
 		pstmt.setInt(1,orderId);
 		 pstmt.executeUpdate();
+		 }catch (Exception e )
+		 {
+			 e.printStackTrace();
+		 } 
+		 finally {
+				if (con != null) {
+					try {
+						con.close();
+						System.out.println("Connection Closed");
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+		 }
+
 		 
 	 }
 	 
 	 public void autoUpdateTrades() throws SQLException, ClassNotFoundException {
 			PreparedStatement pstmt = null;
 			// JDBCConnection connref =new JDBCConnection();
+			Connection con = null;
 			if (con == null) {
 				con = JDBCConnection.getOracleConnection();
 			}
@@ -150,7 +204,8 @@ public class ScheduleDAO {
 	 {
 		 PreparedStatement pstmt = null;
 		 String authToken="";
-		
+		Connection con = null;
+		try {
 		//JDBCConnection connref =new JDBCConnection();
 		 if (con == null ) {
 				con = JDBCConnection.getOracleConnection();
@@ -169,16 +224,31 @@ public class ScheduleDAO {
 			// initiateActions(rs.getString("user_id"),rs.getString("status"),rs.getString("controller_id"),rs.getInt("device_id"),"Timer");
 			//topic=rs.getString(1);
 		 }
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		 finally {
+				if (con != null) {
+					try {
+						con.close();
+						System.out.println("Connection Closed");
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+		 }
 		return  authToken;
 	 }
 	 
 	 
-	 public HashMap<String,Object> getBuyerDeviceId(int sellOrderId) throws SQLException, ClassNotFoundException
+	 public synchronized HashMap<String,Object> getBuyerDeviceId(int sellOrderId) throws SQLException, ClassNotFoundException
 	 {
 		 PreparedStatement pstmt = null;
 		 HashMap<String,Object> data = new HashMap<>();
 		 int meterId=0;
-		
+		Connection con = null;
+		try {
 		//JDBCConnection connref =new JDBCConnection();
 		 if (con == null ) {
 				con = JDBCConnection.getOracleConnection();
@@ -203,22 +273,35 @@ public class ScheduleDAO {
 			// initiateActions(rs.getString("user_id"),rs.getString("status"),rs.getString("controller_id"),rs.getInt("device_id"),"Timer");
 			//topic=rs.getString(1);
 		 }
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		finally {
+			if (con != null) {
+				try {
+					con.close();
+					System.out.println("Connection Closed");
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		
+	}
 		return  data;
 	 }
 	 
-	 public String getBlockChainSettings() throws ClassNotFoundException, SQLException {
+	 public synchronized String getBlockChainSettings() throws ClassNotFoundException, SQLException {
 			PreparedStatement pstmt = null;
+			Connection con = null;
 			String val = "";
+			try {
+			
 			if (con == null) {
 				con = JDBCConnection.getOracleConnection();
 			}
 			String query = "select value from general_config where name='p2p_blockchain_enabled'";
-			// String query = "select
-			// aso.sell_order_id,ubc.private_key,ubc.public_key,abc.order_id,abc.all_blockchain_orders_id
-			// from all_sell_orders aso,all_blockchain_orders abc, user_blockchain_keys ubc
-			// where aso.transfer_start_ts ='2020-05-14 03:00:00' and
-			// abc.general_order_id=aso.sell_order_id and abc.order_type='SELL_ORDER' and
-			// ubc.user_id = aso.seller_id and aso.order_status_id=3";
+			
 			pstmt = con.prepareStatement(query);
 			// pstmt.setString(1,controllerId);
 			ResultSet rs = pstmt.executeQuery();
@@ -229,8 +312,23 @@ public class ScheduleDAO {
 			//	autoUpdateTrades();
 			}
 			System.out.println("val"+val);
-			return val;
-
+			
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+			finally {
+				if (con != null) {
+					try {
+						con.close();
+						System.out.println("Connection Closed");
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			
 		}
+			return val;
 	
+	 }
 }

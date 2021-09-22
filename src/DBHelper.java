@@ -13,15 +13,15 @@ public class DBHelper {
 		{
 		try {	
 		 //JDBCConnection connref =new JDBCConnection();
-		 if (ScheduleDAO.con == null ) {
+		 if (con == null ) {
 				con = JDBCConnection.getOracleConnection();
 		 } 
 			PreparedStatement pstmt = null;
 			String deviceName="";
-			if(ScheduleDAO.con!=null)
+			if(con!=null)
 			{
 					String query="insert into all_blockchain_transactions(blockchain_trx_id,transaction_type,blockchain_order_id) values(?,?,?)";
-					  pstmt=ScheduleDAO.con.prepareStatement(query);
+					  pstmt=con.prepareStatement(query);
 					  pstmt.setString(1,txId);
 					  pstmt.setString(2,status);
 					  pstmt.setInt(3,blockChainOrderId); 
@@ -49,19 +49,20 @@ public class DBHelper {
 		}
 
 	 
-	 public void updateOrderAmount(double sellerTrxAmount, double sellerFine, double buyerTrxAmount, double buyerFine, int orderId) throws SQLException, ClassNotFoundException
+	 public synchronized void updateOrderAmount(double sellerTrxAmount, double sellerFine, double buyerTrxAmount, double buyerFine, int orderId) throws SQLException, ClassNotFoundException
 		{
+		 Connection con = null;
 		try {	
 		 //JDBCConnection connref =new JDBCConnection();
-		 if (ScheduleDAO.con == null ) {
+		 if (con == null ) {
 				con = JDBCConnection.getOracleConnection();
 		 } 
 			PreparedStatement pstmt = null;
 			String deviceName="";
-			if(ScheduleDAO.con!=null)
+			if(con!=null)
 			{
 					String query="update all_sell_orders set seller_energy_tfr=?,seller_fine=?,is_fine_applicable=? where sell_order_id=?";
-					  pstmt=ScheduleDAO.con.prepareStatement(query);
+					  pstmt=con.prepareStatement(query);
 					  pstmt.setDouble(1,sellerTrxAmount);
 					  pstmt.setDouble(2,sellerFine);
 					  if(sellerFine > 0) {
@@ -74,7 +75,7 @@ public class DBHelper {
 					  pstmt.execute();
 					 
 					  query="update all_contracts set seller_energy_tfr=?,seller_fine=?,buyer_energy_tfr=?,buyer_fine=?,is_fine_applicable=? where sell_order_id=?";
-					  pstmt=ScheduleDAO.con.prepareStatement(query);
+					  pstmt=con.prepareStatement(query);
 					  pstmt.setDouble(1,sellerTrxAmount);
 					  pstmt.setDouble(2,sellerFine);
 					  pstmt.setDouble(3,buyerTrxAmount);
@@ -124,6 +125,16 @@ public class DBHelper {
 		
 	 catch(Exception e) {
 		 e.printStackTrace();
+	 }
+		finally {
+			if (con != null) {
+				try {
+					con.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 	 }
 
 		}

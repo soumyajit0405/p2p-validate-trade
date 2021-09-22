@@ -18,17 +18,19 @@ class AgentWorker implements Runnable {
 	private int meterId;
 	private String startTs;
 	private String endTs;
+	private float energy;
 
 	private static String url = "http://139.59.30.90:3020/data_warehouse/meter/fetchDatasnapshot";
 	final long ONE_MINUTE_IN_MILLIS = 60000;// millisecs
 	final long HOUR = 3600 * 1000; // in milli-seconds
 	final long HALFHOUR = 1800 * 1000;
 	
-	public AgentWorker(int orderId, int meterId, String startTs, String endTs) {
+	public AgentWorker(int orderId, int meterId, String startTs, String endTs, float energy) {
 		this.orderId = orderId;
 		this.meterId = meterId;
 		this.startTs = startTs;
 		this.endTs = endTs;
+		this.energy = energy;
 	}
 
 	public void run() {
@@ -120,14 +122,16 @@ class AgentWorker implements Runnable {
 		float p_consumed =  buyerEndReading - buyerStartReading;
 		float p_produced =  sellerEndReading - sellerStartReading;
 		float s_fine =0, b_fine =0;
-		if(p_produced < unit) {
-			s_fine = (unit-p_produced) *(price+2.5f);
-		}else if (p_produced > unit) {
-			s_fine = (p_produced - unit) *(2.5f);
-		}else if (p_consumed > unit) {
-			b_fine = (p_produced - unit) *(2.5f);
-		}else if (p_consumed == unit ) {
-			s_fine = (p_produced - unit) *(2.5f);
+		if(p_produced < energy) {
+			s_fine = (energy-p_produced) *(price+2.5f);
+		}else if (p_produced > energy) {
+			s_fine = (p_produced - energy) *(2.5f);
+		}
+//		}else if (p_consumed == energy ) {
+//			s_fine = (p_produced - energy) *(2.5f);
+//		}
+		 if (p_consumed > energy) {
+			b_fine = (p_consumed - energy) *(2.5f);
 		}
 		System.out.println("  p_produced "+p_produced);
 		System.out.println("  p_consumed "+p_consumed);
@@ -143,25 +147,25 @@ class AgentWorker implements Runnable {
 	}catch(Exception e) {
 		e.printStackTrace();
 	}
-		finally {
-			if (ScheduleDAO.con != null) {
-				try {
-					ScheduleDAO.con.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			
-			if (DBHelper.con != null) {
-				try {
-					DBHelper.con.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}
+//		finally {
+//			if (ScheduleDAO.con != null) {
+//				try {
+//					ScheduleDAO.con.close();
+//				} catch (SQLException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//			}
+//			
+//			if (DBHelper.con != null) {
+//				try {
+//					DBHelper.con.close();
+//				} catch (SQLException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//			}
+//		}
 		System.out.println(Thread.currentThread().getName() + " (End)");// prints thread name
 	}
 	

@@ -44,7 +44,7 @@ public class ActionThreadPoolExecutor {
 				for (int i = 0; i < completedTrades.size(); i++) {
 					Runnable worker = new AgentWorker((int)completedTrades.get(i).get("orderId"),
 							((int)completedTrades.get(i).get("meterId")), (String)completedTrades.get(i).get("startTs"),
-							(String)completedTrades.get(i).get("endTs"));
+							(String)completedTrades.get(i).get("endTs"),(float)completedTrades.get(i).get("energy"));
 					System.out.println("List of run workers");
 					executor.execute(worker);// calling execute method of ExecutorService
 				}

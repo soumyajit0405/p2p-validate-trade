@@ -84,25 +84,25 @@ class WorkerThread implements Runnable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		finally {
-			if (ScheduleDAO.con != null) {
-				try {
-					ScheduleDAO.con.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			
-			if (DBHelper.con != null) {
-				try {
-					DBHelper.con.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}
+//		finally {
+//			if (con != null) {
+//				try {
+//					con.close();
+//				} catch (SQLException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//			}
+//			
+//			if (DBHelper.con != null) {
+//				try {
+//					DBHelper.con.close();
+//				} catch (SQLException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//			}
+//		}
 		System.out.println(Thread.currentThread().getName() + " (End)");// prints thread name
 	}
 

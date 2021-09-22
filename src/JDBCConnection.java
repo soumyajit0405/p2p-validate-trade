@@ -27,7 +27,7 @@ public class JDBCConnection {
 	static String  url="jdbc:mysql://103.120.179.22:3306/autoiinno_energytrade?noAccessToProcedureBodies=true";
 	static String  userName="autoiinno_admin";
 	static String  password="Autoi@12345";
-	public static Connection getOracleConnection()
+	public static synchronized Connection getOracleConnection()
 			throws ClassNotFoundException, SQLException {
 
 		Class.forName("com.mysql.jdbc.Driver");  
