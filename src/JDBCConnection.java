@@ -24,7 +24,7 @@ import javax.sql.DataSource;
 
 public class JDBCConnection {
 	private static Connection connection = null;
-	static String  url="jdbc:mysql://103.120.179.22:3306/autoiinno_energytrade?noAccessToProcedureBodies=true";
+//	static String  url="jdbc:mysql://103.120.179.22:3306/autoiinno_energytrade?noAccessToProcedureBodies=true";
 	static String  userName="autoiinno_admin";
 	static String  password="Autoi@12345";
 	public static synchronized Connection getOracleConnection()
