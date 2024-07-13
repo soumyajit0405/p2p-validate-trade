@@ -175,8 +175,16 @@ public class HttpConnectorHelper {
 				String[] entry = pair.split(":");      
 				//split the pairs to get key and value
 				String[] keys = entry[0].split("\"");
+				if(keys[1].trim().equalsIgnoreCase("sellerFine") || keys[1].trim().equalsIgnoreCase("buyerFine")) {
+					map.put(keys[1].trim(), entry[1]);
+				} else {
 				String[] values = entry[1].split("\"");
+				if (values.length >=2 ) {
 				map.put(keys[1].trim(), values[1].trim());
+				} else {
+					map.put(keys[1].trim(), values[0].trim());
+				}
+				}
 			    
 			    //add them to the hashmap and trim whitespaces
 			}

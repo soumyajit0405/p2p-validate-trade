@@ -24,20 +24,19 @@ import javax.sql.DataSource;
 
 public class JDBCConnection {
 	private static Connection connection = null;
-//	static String  url="jdbc:mysql://103.120.179.22:3306/autoiinno_energytrade?noAccessToProcedureBodies=true";
-	static String  userName="autoiinno_admin";
-	static String  password="Autoi@12345";
-	public static synchronized Connection getOracleConnection()
+	static String  url="jdbc:mysql://64.227.129.34:3306/energytrade?noAccessToProcedureBodies=true";
+	static String  userName="p2pdbuser";
+	static String  password="p2p123";
+	public static Connection getOracleConnection()
 			throws ClassNotFoundException, SQLException {
 
-		Class.forName("com.mysql.jdbc.Driver");  
+		Class.forName("com.mysql.jdbc.Driver");   
 		  
 		/*Connection con=DriverManager.getConnection(  
 				url,userName,password);    */
 		Connection con=DriverManager.getConnection(  
-		// "jdbc:mysql://139.59.34.247:3306/energytrade?noAccessToProcedureBodies=true","remoteadmin","SIrootUser#321");
-		"jdbc:mysql://139.59.30.90:3306/energytrade_015?noAccessToProcedureBodies=true","root","Admin@12345");
-   
+				"jdbc:mysql://64.227.129.34:3306/energytrade?noAccessToProcedureBodies=true","p2pdbuser","p2p123");  
+//   
 
 		return con;
 

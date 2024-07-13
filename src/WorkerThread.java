@@ -36,39 +36,39 @@ class WorkerThread implements Runnable {
 			ScheduleDAO sdc= new ScheduleDAO();
 			System.out.println(Thread.currentThread().getName() + " (Start)");
 			inputDetails1.put("orderId", orderId);
-			//inputDetails1.put("userpbkey", userAddress);
-			//inputDetails1.put("userpvkey", privateKey);
+			inputDetails1.put("sellerAddress", userAddress);
+			inputDetails1.put("sellerPrivatekey", privateKey);
 			//String token = sdc.getAuthToken(userAddress, privateKey);
 			System.out.println("http://159.89.162.194:6380/validatetrade");
 			HashMap<String, String> responseFrombcnetwork = httpconnectorhelper
-					.sendPostWithToken("http://159.89.175.110:3000/api/validateTrade", inputDetails1, 1,"");
+					.sendPostWithToken("http://159.89.175.110:5005/api/validateTrade", inputDetails1, 1,"");
 			// HashMap<String,String> responseAfterParse =
 			// cm.parseInput(responseFrombcnetwork);
-			if (responseFrombcnetwork.get("Status").equalsIgnoreCase("Order Validated")) {
+			if (responseFrombcnetwork.get("Status").equalsIgnoreCase("Trading Validated")) {
 				// AllBlockchainOrder allbcorder=
 				// bcdao.createBlockchainOrder(responseFrombcnetwork.get("Batch_id"),responseFrombcnetwork.get("order_id"),count1);
 				// // Call BC API and put it in another method
-				dbhelper.createBlockchainTx("abc", "TRADE_VALIDATED",  blockChainOrderId);
+ 				dbhelper.createBlockchainTx("abc", "TRADE_VALIDATED",  blockChainOrderId);
 				sdao.updateOrderStatus(generalOrderId);
 				//Commented Fines Section
 				
-				try {
-					Thread.sleep(60000);
-				} catch (InterruptedException e) {
-
-					e.printStackTrace();
-
-				}
-				inputDetails1 = new JSONObject();
-				inputDetails1.put("orderid", orderId);
-//				JSONObject jsResponse = httpconnectorhelper
-//						.sendPostWithTokenForOrder("http://159.89.175.110:6380/getOrder", inputDetails1, 1, token);
+//				try {
+//					Thread.sleep(10000);
+//				} catch (InterruptedException e) {
 //
-//				dbhelper.updateOrderAmount(
-//						(int) jsResponse.get("Seller_METER_READING_S") - (int) jsResponse.get("Seller_METER_READING_E"),
-//						(int) jsResponse.get("S_FINE"),
-//						(int) jsResponse.get("Buyer_METER_READING_S") - (int) jsResponse.get("Buyer_METER_READING_E"),
-//						(int) jsResponse.getDouble("B_FINE"), generalOrderId);
+//					e.printStackTrace();
+//
+//				}
+//				inputDetails1 = new JSONObject();
+//				inputDetails1.put("orderid", orderId);
+				HashMap<String, String> jsResponse = httpconnectorhelper
+						.sendPostWithToken("http://159.89.175.110:5005/api/getTradeDetail", inputDetails1, 1, "");
+
+				dbhelper.updateOrderAmount(
+						Double.parseDouble(jsResponse.get("sellerMeterReadingStart")) - Double.parseDouble(jsResponse.get("sellerMeterReadingEnd")),
+						Double.parseDouble( jsResponse.get("sellerFine")),
+						Double.parseDouble(jsResponse.get("buyerMeterReadingStart")) - Double.parseDouble(jsResponse.get("buyerMeterReadingEnd")),
+						Double.parseDouble( jsResponse.get("buyerFine")), generalOrderId);
 
 			}
 	} catch (ClassNotFoundException e) {

@@ -34,8 +34,8 @@ public class ScheduleDAO {
 		 }
 		 if (source.equalsIgnoreCase("BC")) {
 			System.out.println("select aso.sell_order_id,ubc.private_key,ubc.user_address,abc.order_id from all_sell_orders aso,all_blockchain_orders abc, user_blockchain_keys ubc where aso.transfer_end_ts ='"+date+" "+time+"' and abc.general_order_id=aso.sell_order_id and abc.order_type='SELL_ORDER' and ubc.user_id  = aso.seller_id and aso.order_status_id=5");
-			query="select aso.sell_order_id,ubc.private_key,ubc.user_address,abc.order_id,abc.all_blockchain_orders_id from all_sell_orders aso,all_blockchain_orders abc, user_blockchain_keys ubc where aso.transfer_end_ts ='"+date+" "+time+"' and abc.general_order_id=aso.sell_order_id and abc.order_type='SELL_ORDER' and ubc.user_id  = aso.seller_id and aso.order_status_id=5";
-			//String query="select aso.sell_order_id,ubc.private_key,ubc.public_key,abc.order_id,abc.all_blockchain_orders_id from all_sell_orders aso,all_blockchain_orders abc, user_blockchain_keys ubc where aso.transfer_end_ts ='2020-05-03 11:00:00' and abc.general_order_id=aso.sell_order_id and abc.order_type='SELL_ORDER' and ubc.user_id  = aso.seller_id and aso.order_status_id=5";
+			//query="select aso.sell_order_id,ubc.private_key,ubc.user_address,abc.order_id,abc.all_blockchain_orders_id from all_sell_orders aso,all_blockchain_orders abc, user_blockchain_keys ubc where aso.transfer_end_ts ='"+date+" "+time+"' and abc.general_order_id=aso.sell_order_id and abc.order_type='SELL_ORDER' and ubc.user_id  = aso.seller_id and aso.order_status_id=5";
+			 query="select aso.sell_order_id,ubc.private_key,ubc.user_address,abc.order_id,abc.all_blockchain_orders_id from all_sell_orders aso,all_blockchain_orders abc, user_blockchain_keys ubc where aso.transfer_end_ts ='2021-12-31 17:00:00' and abc.general_order_id=aso.sell_order_id and abc.order_type='SELL_ORDER' and ubc.user_id  = aso.seller_id and aso.order_status_id=5";
 		 pstmt=con.prepareStatement(query);
 		// pstmt.setString(1,controllerId);
 		 ResultSet rs= pstmt.executeQuery();
